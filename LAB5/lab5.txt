@@ -1,0 +1,12 @@
+========================== 
+====  Laborator 5 TS  ====
+==========================
+
+-> Vom folosi si valori de selectie obtinute prin distributii diferite de cea uniforma
+-> nume_distributie( tip_generator, param_locatie, param_de_scara)
+
+	GENERATE( Normal(1, miu, sigma)) 
+	GENERATE( Exponential(1, 0, miu))
+
+
+

@@ -1,0 +1,25 @@
+numeC EQU x ---- constante
+            Se atribuie val acestei expresii identificatorului constantei, astfel, in program cand va aparea numeC, numeC va avea valoarea data de expresia din x
+
+ADVANCE numeC --- intarziere egala cu valoarea din numeC
+
+
+numeV VARIABLE X === variabila
+	De fiecare data cand va fi evaluata expresia, va avea alta valoare
+
+	Apelul se face V$numeV
+
+
+Bloc care ne ajuta sa creem un fel de variabila locala ptr fiecare tranzactie in parte
+Fiecare tranzactie va avea asocat un parametru numit parametrul tranzactiei. Acel parametru are numele de parametrul tranzactiei.
+GENERATE
+........
+ASSINGN nr +-, valoare
+sau
+ASSIGN nume+-, valoare
+
+
+Exp ADVANCE Pnr
+	(Pnr = valoare)
+ADVANCE P$nume
+	(P$nume = valoare)

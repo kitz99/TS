@@ -1,0 +1,48 @@
+===== Laboratorul 2 ======
+=====   14.10.2014  ======
+==========================
+
+SEIZE facilitate
+RELEASE facilitate
+
+
+-----------------------------------------------------------------------------------------------------------------------------
+
+statii STORAGE nr_statii  - Are eticheta obligatorie
+
+
+GENERATE
+......
+[et_opG] GATE O, statii,salt(eticheta)
+[Et_optE] ENTER
+.....
+[Et_optL] LEAVE
+TERMINATE
+
+salt BLOC_SALT parametri
+
+
+
+Blocul care functioneaza ca if, si se refera la storage se numeste GATE. Are eticheta optionala. Are ca parametri:
+O {un operator asociat unei conditii}. Spunem ca testul are succes daca exista spatii libere in STORAGE. Daca conditia este adevarata, atunci se trece la blocul urmator. Nu se poate pune ca si eticheta un nume de bloc. Trebuie neapart o eticheta.
+
+Blocul - [et_optT]TRANSFER ,salt_T
+unde salt_T este un bloc de transfer asociat lui salt_T
+
+Pentru histograma - pe OX - interval de timp
+                  - pe OY - Frecventa f1, f2, ...
+
+                   unde f1 = nr de apeluri care au avut X in intervalul (-inf, x1]
+                        f2 = nr de apeluri care au avut X in intervalul (x1, x2]
+                        ...
+                        fd = nr de apeluri care au avut X in intervalul (xd-1, +inf]
+
+                        	in GPSS: list TABLE A,B,C,D --- inainte de generate
+                        					A - asociat variabilei aleatoare. El actualizeaza histograma
+                        					A = M1. M1 este un atribut din sistemul de atribute al GPSS. Reprezinta timpul de cand o tranzactie a fost creata prin blocul GENERATE si pana la momentul in care tranzactia a accesat un bloc care implica calculul acestui parametru.
+                        					
+                        					B - capatul din dreapta al primului inteval de frecventa pe OX
+                        					C - lungimea unui interval de pe axa OX
+                        					D - numarul subdiviziunilor
+                        	     [Et_pt tab]TABUATE list -- dupa generate
+                        	     terminate

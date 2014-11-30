@@ -1,0 +1,37 @@
+====================
+===  Laborator 4 ===
+====================
+
+Facilitatea se ocupa printr-un bloc PREEMPT
+
+Cum functioneaza:
+	1) Cazul in care tranzactiile nu au asociate prioritati:
+		1.1 Daca facilitatea este ocupata de catre o tranzactie prin blocul SEIZE 
+			atunci o noua tranzactie care incearca ocuparea facilitatii printr-un bloc PREEMPT
+			determina elliminarea tranzactiei care ocupa facilitatea(si introducerea acesteia intr-o coada de asteptare)
+			si ocupaerea facilitatii de catre tranzactia care a accesat blocul PREEMPT
+		1.2 Daca facilitatea este ocupata trintr-un bloc PREEMPT, atunci o noua tranzactie care incearca ocuparea facilitatii 
+		    chiar si printr-un bloc PREEMPT va fi introdusa in coada de asteptare.
+
+    2) Cazul in care tranzactiile au asociate prioritati:
+    	O prioritate se asociaza unei tranzactii prin blocul GENERATE (al 5-lea parametru)
+    	Cu cat valoarea parametrului este mai mare, atunci prioritatea este mai mare
+    	Se introduce la PREEMPT si al 2-lea parametru PR(priority) si regula devine:
+    	In momentul in care o tranzactie incearca ocuparea facilitatii printr-un bloc PREEMPS care contine si parametrul al 2-lea pr, 
+    	tranzactia care deja ocupa faciilitatea va fi eliminata doar daca noua tranzactie are o prioritate mai mare decat aceasta;
+    	(indiferent daca facilitatea a ocupat prin SEIZE sau PREEMPT)
+
+    Al treilea parametru la PREEMPT este o eticheta a unui bloc care sa permita ca tranzactia eliminata sa nu fie neaparat pusa in coada, si sa
+    fie dirijata catre alt bloc
+
+
+TIP PARTICULAR DE HISTOGRAMA
+	QTABLE - histograma asociata var aleatoatre "timpul de asteptare a unei tranzactii intr-o coada"
+	construieste repartitia timpului de asteptare a unei tranzacii intr-o coada
+	Parametrii B, C, D - definesc histograma
+	Primul parametru va fi numele parametrului care se da in blocurile QUEUE si DEPART
+
+
+
+
+
