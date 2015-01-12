@@ -1,0 +1,16 @@
+========================== 
+====  Lab 9 TS        ====
+==========================
+
+Blocul SPLIT A, B, C [SPLIT 2, et, nume]
+	-> Tranzactia activa merge mai departe, dar se mai creeaza inca doua copii ce sunt asociate acestei tranzactii active.
+	-> copiile sunt transferate amandoua intr-un bloc cu eticheta data ca parametru
+	-> avem identif asociati fiecarei tranzactii
+	-> ident sunt dati prin par asoc tranz active, dat dupa virgula;
+	-> pentru a lua valoarea folosim P$Nume - 1, daca prin bloc a trecut tranzactia activa
+											- 2, daca este copia 1
+											- 3, daca este copia 2
+	-> pentru reunirea tranzactiei se foloseste GATHER nr_tranz_reunite
+	-> tranzactiile trec mai departe cand se reunesc toare tranzactiile.
+	-> la blocul urmator vor intra toate tranzactiile
+	->
