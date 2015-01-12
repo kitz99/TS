@@ -1,0 +1,184 @@
+1) Rezolvarea problemei:
+
+	distributie FUNCTION RN1,D4
+	.10,3/.40,5/.80,7/1.0,10
+	functionar_2 STORAGE 2 ;functionarii care se ocupa de a doua etapa
+
+	GENERATE (Exponential(1,1,1)) ; Se genereaza cate un client ce vine la banca
+
+	etapa_unu QUEUE asteapta1 ; Incepe prima etapa in care sunt verificate actele
+	SEIZE functionar_bancar ; Persoana ocupa functionarul bancar
+	DEPART asteapta1
+	ADVANCE distributie ; timpul in care se verifica actele persoanei
+	RELEASE functionar_bancar ;  functionarul bancar termina de verificat
+	TRANSFER  .100,,acte_not_ok ; 10% sunt elimitati pt ca nu au acte ok
+
+	etapa_doi QUEUE asteapta2 ; Cei care au trecut de prima etapa ajung in etapa 2
+	ET_GATE GATE SNF functionar_2,asteapta ; se verifica daca exista un functionar bancar liber
+	ENTER functionar_2 ; se ocupa un functionat
+	DEPART asteapta2
+	ADVANCE 5,2 ; timpul cat dureaza etapa a doua
+	LEAVE functionar_2 ; se elibereaza functionarul
+	TERMINATE 1 ; clientul paraseste banca
+
+	asteapta TRANSFER ,ET_GATE
+
+	acte_not_ok TERMINATE
+
+Raportul in urma simularii: Se introduce 50 in fereastra de start, si simularea incepe
+
+
+              GPSS World Simulation Report - Test.2.1
+
+
+                   Tuesday, January 06, 2015 14:39:23  
+
+           START TIME           END TIME  BLOCKS  FACILITIES  STORAGES
+                0.000         600005.509    16        1          1
+
+
+              NAME                       VALUE  
+          ACTE_NOT_OK                    16.000
+          ASTEAPTA                       15.000
+          ASTEAPTA1                   10002.000
+          ASTEAPTA2                   10004.000
+          DISTRIBUTIE                 10000.000
+          ETAPA_DOI                       8.000
+          ETAPA_UNU                       2.000
+          ET_GATE                         9.000
+          FUNCTIONAR_2                10001.000
+          FUNCTIONAR_BANCAR           10003.000
+
+
+ LABEL              LOC  BLOCK TYPE     ENTRY COUNT CURRENT COUNT RETRY
+                    1    GENERATE        299779             0       0
+ETAPA_UNU           2    QUEUE           299779        299718       0
+                    3    SEIZE               61             0       0
+                    4    DEPART              61             0       0
+                    5    ADVANCE             61             1       0
+                    6    RELEASE             60             0       0
+                    7    TRANSFER            60             0       0
+ETAPA_DOI           8    QUEUE               50             0       0
+ET_GATE             9    GATE                50             0       0
+                   10    ENTER               50             0       0
+                   11    DEPART              50             0       0
+                   12    ADVANCE             50             0       0
+                   13    LEAVE               50             0       0
+                   14    TERMINATE           50             0       0
+ASTEAPTA           15    TRANSFER             0             0       0
+ACTE_NOT_OK        16    TERMINATE           10             0       0
+
+
+FACILITY         ENTRIES  UTIL.   AVE. TIME AVAIL. OWNER PEND INTER RETRY DELAY
+ FUNCTIONAR_BANCAR    61    1.000    9836.137  1       61    0    0     0   299718
+
+
+QUEUE              MAX CONT. ENTRY ENTRY(0) AVE.CONT. AVE.TIME   AVE.(-0) RETRY
+ ASTEAPTA1        299718 299718 299779      1  149811.825 299847.288 299848.289   0
+ ASTEAPTA2           1    0     50     50     0.000      0.000      0.000   0
+
+
+STORAGE            CAP. REM. MIN. MAX.  ENTRIES AVL.  AVE.C. UTIL. RETRY DELAY
+ FUNCTIONAR_2        2    2   0     1       50   1    0.000  0.000    0    0
+
+
+FEC XN   PRI         BDT      ASSEM  CURRENT  NEXT  PARAMETER    VALUE
+299780    0      600006.794   299780      0      1
+    61    0      610001.172     61      5      6
+
+
+2) Pentru a reprezenta grafic distributia timpului de asteptare a clientilor pentru a fi serviti de
+   un angajat al bancii in cazul etapei 2 se va initializa o histograma folosind intructiunea << distr_timp TABLE M1,5,5,10 >>
+   unde M1 reprezinta timpul tranzactiei in sistem. Instructiunea << TABULATE distr_timp >> se plaseaza inaintea instructiuni GATE ... 
+   in momentul in care incepe etapa 2. In aceste conditii, indiferent daca este sau nu functionar liber, timpul de asteptare este contorizat.
+   Pentru a vizualiza histograma, accesam din meniu optiunea "Window" -> Simulation Window -> Table Window -> selectam histograma din meniul ce apare -> Ok -> vizualizam histograma.
+   In momentul de fata, programul GPSS arata astfel:
+
+
+		distributie FUNCTION RN1,D4
+		.10,3/.40,5/.80,7/1.0,10
+		functionar_2 STORAGE 2 ;functionarii care se ocupa de a doua etapa
+		distr_timp TABLE M1,5,5,10
+
+		GENERATE (Exponential(1,1,1)) ; Se genereaza cate un client ce vine la banca
+
+		etapa_unu QUEUE asteapta1 ; Incepe prima etapa in care sunt verificate actele
+		SEIZE functionar_bancar ; Persoana ocupa functionarul bancar
+		DEPART asteapta1
+		ADVANCE distributie ; timpul in care se verifica actele persoanei
+		RELEASE functionar_bancar ;  functionarul bancar termina de verificat
+		TRANSFER  .100,,acte_not_ok ; 10% sunt elimitati pt ca nu au acte ok
+
+		etapa_doi QUEUE asteapta2 ; Cei care au trecut de prima etapa ajung in etapa 2
+		TABULATE distr_timp
+		ET_GATE GATE SNF functionar_2,asteapta
+		TABULATE distr_timp
+		ENTER functionar_2
+		DEPART asteapta2
+		ADVANCE 5,2
+		LEAVE functionar_2
+		TERMINATE 1
+
+		asteapta TRANSFER ,ET_GATE
+
+		acte_not_ok TERMINATE 
+
+3) 
+	Blocul PREEMPT simuleaza intrarea unei tranzactii la un serviciu cu un singur punct de servire, dupa ce in prealabil a fost eliminata
+	tranzactia care eventual ocupa acel serviciu.
+	Forma generala: PREEMPT A, B, C
+	unde:	
+		A - numele facilitatii a carei ocupare se simuleaza. Este un parametru obligatoriu.
+
+		B - parametru ce reprezinta modul in care este eliminata o tranzactie. In cazul in care B este PR, criteriul de eliminare este prioritatea, indiferent daca tranzactia ce ocupa faculitatea a intrat prin blocul SEIZE sau prin blocul PREEMPT. B nu este obligatoriu, iar daca lipseste, si daca facilitatea este ocupata tot prin blocul PREEMPT, atunci se asteapta eliberarea facilitatii
+
+		C - parametru ce reprezinta numele blocului la care este trimisa tranzactia dupa ce a fost eliminata. Este un parametru optional, iar daca lipseste, tranzactia poate ramane in asteptare, si poate reveni atunci cand facilitatea este eliberata.
+	Epntru a elibera o facilitate ocupata cu PREEMPT se foloseste blocul RETURN
+
+	Blocul SEIZE simuleaza ocuparea unei facilitati de catre o tranzactie. Are forma generala SEIZE A, unde A este numele facilitatii ce este ocupata de tranzactie.
+	Se foloseste impreuna cu blocul RELEASE
+
+4) Pentru a vizualiza numarul de persoane eliminare din cauza ca nu au toate actele ok, am ales sa folosesc un "savevalue" pentru a contoriza 
+   cate persoane au fost trimise dupa etapa 1 catre blocul cu acea eticheta. Inainte de a fi eliminata din sistem, adaug 1 la valoarea veche a "savevalue"
+   Pentru a vizualiza valoarea, alegem din meniul Window optiunea Simulation window -> Expression window -> Trecem la "label" un nume sugestiv pentru valoarea ce va fi vizualizata, in campul "Expresion" trecem X$numar_elim, unde numar_elim este "savevalue"-ul care a contorizat aceste persoane, apasam View -> apasam Memorize -> Ok -> Apare valoarea tinuta in "savevalue"
+
+5) Pentru a contoriza numarul de clienti din banca folosim o un bloc savevalue pe care il incrementam de fiecare data cand intra un client in banca, si il decremenam in momentul in care un client paraseste banca indiferent ca a fost eliminat ptr ca nu are actele ok sau ptr ca a finalizat etapa 2.
+
+Pentru a plota graficul alegem Window -> simulation window -> plot window -> Eticheta sugestiva -> Expression: X$pers_in_banca -> MinValue = 0, MaxValue = 600005.509 -> TimeRange = 10 -> Plot -> Memorize -> OK. Apare reprezentarea grafica pe ecran.
+
+In final programmul GPSS arata astfel:
+
+
+		distributie FUNCTION RN1,D4
+		.10,3/.40,5/.80,7/1.0,10
+		functionar_2 STORAGE 2 ;functionarii care se ocupa de a doua etapa
+		distr_timp TABLE M1,5,5,10
+		SAVEVALUE nr_elim,0
+		SAVEVALUE pers_in_banca,0
+
+		GENERATE (Exponential(1,1,1)) ; Se genereaza cate un client ce vine la banca
+
+		etapa_unu SAVEVALUE pers_in_banca+,1  ; incrementam numarul de persoane din banca
+		QUEUE asteapta1 ; Incepe prima etapa in care sunt verificate actele
+		SEIZE functionar_bancar ; Persoana ocupa functionarul bancar
+		DEPART asteapta1
+		ADVANCE distributie ; timpul in care se verifica actele persoanei
+		RELEASE functionar_bancar ;  functionarul bancar termina de verificat
+		TRANSFER  .100,,acte_not_ok ; 10% sunt elimitati pt ca nu au acte ok
+
+		etapa_doi QUEUE asteapta2 ; Cei care au trecut de prima etapa ajung in etapa 2
+		TABULATE distr_timp
+		ET_GATE GATE SNF functionar_2
+		TABULATE distr_timp
+		ENTER functionar_2
+		DEPART asteapta2
+		ADVANCE 5,2
+		LEAVE functionar_2
+		SAVEVALUE pers_in_banca-,1
+		TERMINATE 1
+
+		asteapta TRANSFER ,ET_GATE
+
+		acte_not_ok SAVEVALUE pers_in_banca-,1
+		SAVEVALUE nr_elim+,1
+		TERMINATE
